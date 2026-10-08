@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
     public static Handler handler = new Handler();
     private final Runnable connectRetry = this::tryConnect;
     FrameLayout frm;
+    ControllerOverlay controllerOverlay;
     TouchInputHandler mInputHandler;
     protected ICmdEntryInterface service = null;
     public TermuxX11ExtraKeys mExtraKeys;
@@ -317,6 +318,10 @@ public class MainActivity extends AppCompatActivity {
         applyWindowSettings();
 
         frm = findViewById(R.id.frame);
+        // Overlay kontroler (klik kiri/kanan, scroll, Enter, Backspace, Alt, keyboard)
+        controllerOverlay = new ControllerOverlay(this);
+        ((ViewGroup) frm.getParent()).addView(controllerOverlay,
+                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         findViewById(R.id.preferences_button).setOnClickListener((l) -> startActivity(new Intent(this, LoriePreferences.class) {{ setAction(Intent.ACTION_MAIN); }}));
         findViewById(R.id.help_button).setOnClickListener((l) -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/termux/termux-x11/blob/master/README.md#running-graphical-applications"))));
         findViewById(R.id.exit_button).setOnClickListener((l) -> finish());
@@ -1205,6 +1210,8 @@ public class MainActivity extends AppCompatActivity {
         pager.setAlpha(isInPictureInPictureMode ? 0.f : prefs.adjustHeightForEK.get() ? 1.f : ((float) prefs.opacityEKBar.get())/100);
         findViewById(R.id.mouse_buttons).setAlpha(isInPictureInPictureMode ? 0.f : 0.7f);
         findViewById(R.id.mouse_helper_visibility).setAlpha(isInPictureInPictureMode ? 0.f : 1.f);
+        if (controllerOverlay != null)
+            controllerOverlay.setVisibility(!isInPictureInPictureMode && getLorieView().connected() ? View.VISIBLE : View.GONE);
         setTerminalToolbarView();
         if (!isInPictureInPictureMode)
             applyWindowSettings();
@@ -1239,6 +1246,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             setTerminalToolbarView();
+            if (controllerOverlay != null)
+                controllerOverlay.setVisibility(connected && !isInPictureInPictureMode ? View.VISIBLE : View.GONE);
             findViewById(R.id.mouse_buttons).setVisibility(prefs.showMouseHelper.get() && "1".equals(prefs.touchMode.get()) && connected ? View.VISIBLE : View.GONE);
             findViewById(R.id.stub).setVisibility(connected?View.INVISIBLE:View.VISIBLE);
             getLorieView().setVisibility(connected?View.VISIBLE:View.INVISIBLE);
