@@ -925,6 +925,8 @@ public class MainActivity extends AppCompatActivity {
             ekbarContentInset = prefs.adjustHeightForEK.get() && showNow ? layoutParams.height : 0;
             applyContentInsets();
             makeSureHelpersAreVisibleAndInScreenBounds();
+            if (controllerOverlay != null)
+                controllerOverlay.requestRelayout();
         });
     }
 
@@ -975,6 +977,40 @@ public class MainActivity extends AppCompatActivity {
 
     public void toggleExtraKeys() {
         toggleExtraKeys(getTerminalToolbarViewPager().getVisibility() != View.VISIBLE, true);
+    }
+
+    /** Dipakai ControllerOverlay: ikon keyboard membuka/menutup keyboard bawaan Termux:X11 (bar extra keys). */
+    public void toggleControllerKeyboard() {
+        if (prefs.showAdditionalKbd.get())
+            toggleExtraKeys();
+        else
+            toggleKeyboardVisibility();
+    }
+
+    /** Dipakai ControllerOverlay: apakah bar extra keys sedang tampil. */
+    public boolean isExtraKeysBarVisible() {
+        return getTerminalToolbarViewPager().getVisibility() == View.VISIBLE;
+    }
+
+    /** Dipakai ControllerOverlay: tinggi keyboard Android yang sedang tampil (piksel). */
+    public int getControllerImeHeight() {
+        return imeHeight;
+    }
+
+    /** Dipakai ControllerOverlay: ruang yang dipakai bar extra keys di tiap sisi layar (piksel). */
+    public android.graphics.Rect getControllerBarInsets() {
+        android.graphics.Rect r = new android.graphics.Rect();
+        final ViewPager pager = getTerminalToolbarViewPager();
+        if (pager.getVisibility() == View.VISIBLE && pager.getLayoutParams() != null) {
+            int thickness = ((FrameLayout.LayoutParams) pager.getLayoutParams()).height;
+            switch (getPagerPosition()) {
+                case PAGER_POSITION_TOP:    r.top = thickness; break;
+                case PAGER_POSITION_LEFT:   r.left = thickness; break;
+                case PAGER_POSITION_RIGHT:  r.right = thickness; break;
+                default:                    r.bottom = thickness; break;
+            }
+        }
+        return r;
     }
 
     public boolean handleKey(KeyEvent e) {
