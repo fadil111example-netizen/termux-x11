@@ -550,7 +550,7 @@ public class MainActivity extends AppCompatActivity {
         result.bottom = Math.min(result.bottom, sharedParent.getHeight() - imeHeight);
 
         // With adjustHeightForEK on, availableRect already excludes the bar's own space.
-        if (pager.getVisibility() == View.VISIBLE && !prefs.adjustHeightForEK.get()) {
+        if (pager.getVisibility() == View.VISIBLE && (KEEP_DISPLAY_STATIC || !prefs.adjustHeightForEK.get())) {
             // getLayoutParams() is up to date immediately; getWidth()/getHeight() lag until the next layout pass.
             int barThickness = ((FrameLayout.LayoutParams) pager.getLayoutParams()).height;
             switch (getPagerPosition()) {
@@ -898,7 +898,7 @@ public class MainActivity extends AppCompatActivity {
 
             // The window is not resized for the keyboard, so a bar along a side has to end above it.
             layoutParams.width = (pos == PAGER_POSITION_LEFT || pos == PAGER_POSITION_RIGHT) ? frm.getHeight() - imeHeight : frm.getWidth();
-            layoutParams.height = Math.round(37.5f * getResources().getDisplayMetrics().density *
+            layoutParams.height = Math.round(42f * getResources().getDisplayMetrics().density *
                     (extraKeysInfo == null ? 0 : extraKeysInfo.getMatrix().length));
 
             switch (pos) {
@@ -922,13 +922,19 @@ public class MainActivity extends AppCompatActivity {
             }
             pager.setLayoutParams(layoutParams);
 
-            ekbarContentInset = prefs.adjustHeightForEK.get() && showNow ? layoutParams.height : 0;
+            ekbarContentInset = !KEEP_DISPLAY_STATIC && prefs.adjustHeightForEK.get() && showNow ? layoutParams.height : 0;
             applyContentInsets();
             makeSureHelpersAreVisibleAndInScreenBounds();
             if (controllerOverlay != null)
                 controllerOverlay.requestRelayout();
         });
     }
+
+    /**
+     * true = tampilan GUI (Debian) TIDAK PERNAH diubah ukuran / digeser saat keyboard Android atau
+     * keyboard Termux:X11 (bar extra keys) muncul. Keyboard hanya menumpuk di atas layar.
+     */
+    private static final boolean KEEP_DISPLAY_STATIC = true;
 
     private int ekbarContentInset = 0;
     private int imeHeight = 0;
@@ -943,11 +949,16 @@ public class MainActivity extends AppCompatActivity {
         boolean barReservesKeyboardSpace = pos == PAGER_POSITION_BOTTOM && ekbarContentInset > 0;
         int imeContentInset = barReservesKeyboardSpace ? bottomMargin : (prefs.Reseed.get() ? imeHeight : 0);
 
-        getLorieView().setContentInsets(pos == PAGER_POSITION_LEFT ? ekbarContentInset : 0,
-                pos == PAGER_POSITION_TOP ? ekbarContentInset : 0,
-                pos == PAGER_POSITION_RIGHT ? ekbarContentInset : 0,
-                imeContentInset + (pos == PAGER_POSITION_BOTTOM ? ekbarContentInset : 0));
-        getLorieView().setObscuredBottom(imeHeight - imeContentInset);
+        if (KEEP_DISPLAY_STATIC) {
+            getLorieView().setContentInsets(0, 0, 0, 0);
+            getLorieView().setObscuredBottom(0);
+        } else {
+            getLorieView().setContentInsets(pos == PAGER_POSITION_LEFT ? ekbarContentInset : 0,
+                    pos == PAGER_POSITION_TOP ? ekbarContentInset : 0,
+                    pos == PAGER_POSITION_RIGHT ? ekbarContentInset : 0,
+                    imeContentInset + (pos == PAGER_POSITION_BOTTOM ? ekbarContentInset : 0));
+            getLorieView().setObscuredBottom(imeHeight - imeContentInset);
+        }
 
         ViewPager pager = getTerminalToolbarViewPager();
         ViewGroup.MarginLayoutParams pagerParams = (ViewGroup.MarginLayoutParams) pager.getLayoutParams();
