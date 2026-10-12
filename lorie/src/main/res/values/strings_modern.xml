@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="modern_logo_description">Logo Termux:X11</string>
+    <string name="modern_tagline">Server X11 untuk Termux di Android</string>
+    <string name="modern_status_waiting">Menunggu koneksi dari Termux</string>
+    <string name="modern_hint_title">Mulai dari Termux</string>
+    <string name="modern_hint_caption">Ketik perintah ini di Termux, lalu kembali ke sini.</string>
+    <string name="modern_hint_command">termux-x11 :1 -xstartup \"xfce4-session\"</string>
+    <string name="modern_btn_settings">Pengaturan</string>
+    <string name="modern_btn_displays">Tampilan</string>
+    <string name="modern_btn_help">Bantuan</string>
+    <string name="modern_btn_exit">Keluar</string>
+    <string name="modern_tip">Tip: tahan tombol UI di layar untuk mengatur posisi dan ukuran kontrol.</string>
+</resources>

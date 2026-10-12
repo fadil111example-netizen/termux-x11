@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="lorie_bg">#0B0F1A</color>
+    <color name="lorie_bg_top">#111A33</color>
+    <color name="lorie_surface">#141B2D</color>
+    <color name="lorie_accent">#22C55E</color>
+    <color name="lorie_accent_dark">#16A34A</color>
+    <color name="lorie_text_primary">#F8FAFC</color>
+    <color name="lorie_text_secondary">#94A3B8</color>
+    <color name="lorie_text_tertiary">#64748B</color>
+</resources>
