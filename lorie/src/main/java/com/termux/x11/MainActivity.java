@@ -979,12 +979,19 @@ public class MainActivity extends AppCompatActivity {
         toggleExtraKeys(getTerminalToolbarViewPager().getVisibility() != View.VISIBLE, true);
     }
 
-    /** Dipakai ControllerOverlay: ikon keyboard membuka/menutup keyboard bawaan Termux:X11 (bar extra keys). */
+    /**
+     * Dipakai ControllerOverlay: ikon keyboard membuka/menutup keyboard bawaan Termux:X11 (bar extra keys
+     * berisi Esc, Ctrl, Alt, Tab, panah, dll.). Kalau bar extra keys dimatikan lewat Preferences,
+     * otomatis dinyalakan lagi supaya tombol ini tetap berfungsi.
+     */
     public void toggleControllerKeyboard() {
-        if (prefs.showAdditionalKbd.get())
-            toggleExtraKeys();
-        else
-            toggleKeyboardVisibility();
+        if (getTerminalToolbarViewPager().getVisibility() == View.VISIBLE) {
+            toggleExtraKeys(false, true);
+            return;
+        }
+        if (!prefs.showAdditionalKbd.get())
+            prefs.showAdditionalKbd.put(true);
+        toggleExtraKeys(true, true);
     }
 
     /** Dipakai ControllerOverlay: apakah bar extra keys sedang tampil. */
