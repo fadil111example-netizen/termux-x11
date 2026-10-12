@@ -469,7 +469,7 @@
         android:pointerIcon="arrow"
         android:layout_width="match_parent"
         android:layout_height="37.5dp"
-        android:background="@android:color/black"
+        android:background="@drawable/bg_extrakeys_dock"
         android:layoutDirection="ltr"
         android:layout_gravity="bottom|center"/>
 
