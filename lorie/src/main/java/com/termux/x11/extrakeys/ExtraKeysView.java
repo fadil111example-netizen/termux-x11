@@ -7,8 +7,11 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.InsetDrawable;
 import android.graphics.drawable.DrawableWrapper;
 import android.os.Build;
 import android.os.Handler;
@@ -122,13 +125,13 @@ public final class ExtraKeysView extends GridLayout {
     }
 
     /** Defines the default value for {@link #mButtonTextColor} */
-    public static final int DEFAULT_BUTTON_TEXT_COLOR = 0xFFFFFFFF;
+    public static final int DEFAULT_BUTTON_TEXT_COLOR = 0xFFF1F5F9;
     /** Defines the default value for {@link #mButtonActiveTextColor} */
-    public static final int DEFAULT_BUTTON_ACTIVE_TEXT_COLOR = 0xFF80DEEA;
+    public static final int DEFAULT_BUTTON_ACTIVE_TEXT_COLOR = 0xFFFFFFFF;
     /** Defines the default value for {@link #mButtonBackgroundColor} */
-    public static final int DEFAULT_BUTTON_BACKGROUND_COLOR = 0x00000000;
+    public static final int DEFAULT_BUTTON_BACKGROUND_COLOR = 0x1FFFFFFF;
     /** Defines the default value for {@link #mButtonActiveBackgroundColor} */
-    public static final int DEFAULT_BUTTON_ACTIVE_BACKGROUND_COLOR = 0xFF7F7F7F;
+    public static final int DEFAULT_BUTTON_ACTIVE_BACKGROUND_COLOR = 0xCC22C55E;
 
     /** Defines the minimum allowed duration in milliseconds for {@link #mLongPressTimeout}. */
     public static final int MIN_LONG_PRESS_DURATION = 200;
@@ -265,6 +268,29 @@ public final class ExtraKeysView extends GridLayout {
     }
 
 
+    private int dp(float value) {
+        return Math.round(value * getResources().getDisplayMetrics().density);
+    }
+
+    /** Latar tombol bergaya kaca: sudut membulat dengan celah kecil di sekelilingnya. */
+    Drawable buttonBackground(boolean active) {
+        GradientDrawable shape = new GradientDrawable();
+        shape.setShape(GradientDrawable.RECTANGLE);
+        shape.setCornerRadius(dp(13));
+        shape.setColor(active ? mButtonActiveBackgroundColor : mButtonBackgroundColor);
+        if (active)
+            shape.setStroke(dp(1), 0x99B7F7CF);
+        return new InsetDrawable(shape, dp(3));
+    }
+
+    /** Apakah tombol khusus (Ctrl, Alt, dll.) ini sedang aktif / terkunci. */
+    private boolean isSpecialActive(ExtraKeyButton buttonInfo) {
+        if (!isSpecialButton(buttonInfo))
+            return false;
+        SpecialButtonState state = mSpecialButtons.get(SpecialButton.valueOf(buttonInfo.key));
+        return state != null && state.isActive;
+    }
+
     /** Get {@link #mButtonTextColor}. */
     public int getButtonTextColor() {
         return mButtonTextColor;
@@ -345,14 +371,7 @@ public final class ExtraKeysView extends GridLayout {
                 if (mBaseTextSize <= 0)
                     mBaseTextSize = button.getTextSize();
 
-                button.setBackground(new ColorDrawable(Color.BLACK) {
-                    public boolean isStateful() {
-                        return true;
-                    }
-                    public boolean hasFocusStateSpecified() {
-                        return true;
-                    }
-                });
+                button.setBackground(buttonBackground(isSpecialActive(buttonInfo)));
                 if (!setIcon(button, buttonInfo.key))
                     button.setText(buttonInfo.display);
                 if (buttonInfo.popup != null)
@@ -360,6 +379,7 @@ public final class ExtraKeysView extends GridLayout {
                 if (!isSpecialButton(buttonInfo))
                     button.setTextColor(mButtonTextColor);
                 button.setAllCaps(true);
+                button.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
                 button.setPadding(0, 0, 0, 0);
 
                 button.setOnClickListener(view -> {
@@ -370,7 +390,7 @@ public final class ExtraKeysView extends GridLayout {
                 button.setOnTouchListener((view, event) -> {
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
-                            view.setBackgroundColor(mButtonActiveBackgroundColor);
+                            view.setBackground(buttonBackground(true));
                             // Start long press scheduled executors which will be stopped in next MotionEvent
                             startScheduledExecutors(view, buttonInfo, button);
                             return true;
@@ -380,23 +400,23 @@ public final class ExtraKeysView extends GridLayout {
                                 // Show popup on swipe up
                                 if (mPopupWindow == null && (reverseRows ? (event.getY() > 0) : (event.getY() < 0))) {
                                     stopScheduledExecutors();
-                                    view.setBackgroundColor(mButtonBackgroundColor);
+                                    view.setBackground(buttonBackground(isSpecialActive(buttonInfo)));
                                     showPopup(view, buttonInfo.popup);
                                 }
                                 if (mPopupWindow != null && (reverseRows ? (event.getY() < 0) : (event.getY() > 0))) {
-                                    view.setBackgroundColor(mButtonActiveBackgroundColor);
+                                    view.setBackground(buttonBackground(true));
                                     dismissPopup();
                                 }
                             }
                             return true;
 
                         case MotionEvent.ACTION_CANCEL:
-                            view.setBackgroundColor(mButtonBackgroundColor);
+                            view.setBackground(buttonBackground(isSpecialActive(buttonInfo)));
                             stopScheduledExecutors();
                             return true;
 
                         case MotionEvent.ACTION_UP:
-                            view.setBackgroundColor(mButtonBackgroundColor);
+                            view.setBackground(buttonBackground(isSpecialActive(buttonInfo)));
                             stopScheduledExecutors();
                             // If ACTION_UP up was not from a repetitive key or was with a key with a popup button
                             if (mLongPressCount == 0 || mPopupWindow != null) {
@@ -550,7 +570,7 @@ public final class ExtraKeysView extends GridLayout {
         button.setMinimumHeight(0);
         button.setWidth(width);
         button.setHeight(height);
-        button.setBackgroundColor(mButtonActiveBackgroundColor);
+        button.setBackground(buttonBackground(true));
         mPopupWindow = new PopupWindow(this);
         mPopupWindow.setWidth(LayoutParams.WRAP_CONTENT);
         mPopupWindow.setHeight(LayoutParams.WRAP_CONTENT);
