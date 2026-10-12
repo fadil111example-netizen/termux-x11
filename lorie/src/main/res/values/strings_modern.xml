@@ -11,4 +11,5 @@
     <string name="modern_btn_help">Bantuan</string>
     <string name="modern_btn_exit">Keluar</string>
     <string name="modern_tip">Tip: tahan tombol UI di layar untuk mengatur posisi dan ukuran kontrol.</string>
+    <string name="modern_text_input_hint">Ketik teks, lalu tekan Enter</string>
 </resources>
