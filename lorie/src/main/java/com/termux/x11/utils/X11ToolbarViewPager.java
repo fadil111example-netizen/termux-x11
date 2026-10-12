@@ -7,6 +7,9 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Build.VERSION_CODES;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.InsetDrawable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,6 +35,16 @@ public class X11ToolbarViewPager {
         public PageAdapter(MainActivity activity, View.OnKeyListener listen) {
             this.mActivity = activity;
             this.mEventListener = listen;
+        }
+
+        /** Latar tombol bergaya kaca (sama dengan tombol extra keys). */
+        private Drawable keyBackground(boolean active) {
+            float d = mActivity.getResources().getDisplayMetrics().density;
+            GradientDrawable shape = new GradientDrawable();
+            shape.setShape(GradientDrawable.RECTANGLE);
+            shape.setCornerRadius(13 * d);
+            shape.setColor(active ? 0xCC22C55E : 0x1FFFFFFF);
+            return new InsetDrawable(shape, Math.round(3 * d));
         }
 
         @Override
@@ -80,23 +93,16 @@ public class X11ToolbarViewPager {
                 back.setOnClickListener(v -> mActivity.getTerminalToolbarViewPager().setCurrentItem(0, true));
                 back.setTextColor(0xFFFFFFFF);
                 back.setPadding(0, 0, 0, 0);
-                back.setBackground(new ColorDrawable(Color.BLACK) {
-                    public boolean isStateful() {
-                        return true;
-                    }
-                    public boolean hasFocusStateSpecified() {
-                        return true;
-                    }
-                });
+                back.setBackground(keyBackground(false));
                 back.setOnTouchListener((view, event) -> {
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
-                            view.setBackgroundColor(0xFF7F7F7F);
+                            view.setBackground(keyBackground(true));
                             break;
 
                         case MotionEvent.ACTION_UP:
                         case MotionEvent.ACTION_CANCEL:
-                            view.setBackgroundColor(0x00000000);
+                            view.setBackground(keyBackground(false));
                             break;
                     }
                     return false;
