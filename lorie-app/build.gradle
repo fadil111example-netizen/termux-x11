@@ -28,7 +28,8 @@ android {
     defaultConfig {
         applicationId "com.termux.x11"
         minSdkVersion 24
-        targetSdkVersion 34
+        // 28 supaya proot di dalam aplikasi boleh dijalankan dari folder data aplikasi (sama seperti Termux).
+        targetSdkVersion 28
         versionCode 15
         versionName termuxX11VersionName
     }

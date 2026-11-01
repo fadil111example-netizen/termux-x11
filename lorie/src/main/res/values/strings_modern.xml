@@ -12,4 +12,6 @@
     <string name="modern_btn_exit">Keluar</string>
     <string name="modern_tip">Tip: tahan tombol UI di layar untuk mengatur posisi dan ukuran kontrol.</string>
     <string name="modern_text_input_hint">Ketik teks, lalu tekan Enter</string>
+    <string name="modern_btn_terminal">Terminal &amp; Debian</string>
+    <string name="modern_btn_desktop">Mulai Desktop Debian</string>
 </resources>

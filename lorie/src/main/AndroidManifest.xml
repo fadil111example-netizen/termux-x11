@@ -4,6 +4,7 @@
     android:installLocation="internalOnly">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
@@ -11,7 +12,18 @@
     <application
         android:name=".LorieApp"
         android:allowBackup="false"
+        android:largeHeap="true"
         tools:ignore="DataExtractionRules,GoogleAppIndexingWarning">
+        <service
+            android:name=".DesktopService"
+            android:exported="false" />
+        <activity
+            android:name=".TerminalActivity"
+            android:exported="false"
+            android:label="Terminal"
+            android:theme="@style/LorieAppTheme"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="fontScale|orientation|screenSize|keyboard|keyboardHidden|layoutDirection|locale|navigation|screenLayout|uiMode|smallestScreenSize|density" />
         <activity
             android:name=".MainActivity"
             android:taskAffinity=".MainActivity"

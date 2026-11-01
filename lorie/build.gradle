@@ -50,6 +50,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.4.20"
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0'
     implementation 'androidx.preference:preference:1.2.1'
+    // Terminal di dalam aplikasi (pustaka resmi Termux) dan pembuka format .xz untuk backup Debian
+    implementation 'com.github.termux.termux-app:terminal-view:0.118.0'
+    implementation 'org.tukaani:xz:1.9'
     compileOnly project(':shell-loader:stub')
 }
 afterEvaluate {
