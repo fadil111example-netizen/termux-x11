@@ -663,7 +663,7 @@ public class TerminalActivity extends AppCompatActivity {
         public void onTerminalCursorStateChange(boolean state) {
         }
 
-        @Override
+        // Tidak ada @Override: di pustaka v0.118.0 fungsi ini tidak ada di interface.
         public void setTerminalShellPid(TerminalSession session, int pid) {
         }
 
@@ -742,7 +742,7 @@ public class TerminalActivity extends AppCompatActivity {
         public void onTerminalCursorStateChange(boolean state) {
         }
 
-        @Override
+        // Tidak ada @Override: di pustaka v0.118.0 fungsi ini tidak ada di interface.
         public void setTerminalShellPid(TerminalSession session, int pid) {
         }
 
